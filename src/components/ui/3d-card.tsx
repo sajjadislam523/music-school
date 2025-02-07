@@ -107,7 +107,7 @@ type CardItemProps<T extends React.ElementType = "div"> = {
 } & React.ComponentPropsWithoutRef<T>;
 
 export const CardItem = <T extends React.ElementType = "div">({
-    as: Tag = "div",
+    as: Tag = "div" as T,
     children,
     className,
     translateX = 0,
