@@ -34,12 +34,12 @@ export const CardContainer = ({
         containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
     };
 
-    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseEnter = () => {
         setIsMouseEntered(true);
-        if (!containerRef.current) return;
+        // No need to check containerRef here if nothing else is done
     };
 
-    const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseLeave = () => {
         if (!containerRef.current) return;
         setIsMouseEntered(false);
         containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
@@ -94,7 +94,19 @@ export const CardBody = ({
     );
 };
 
-export const CardItem = ({
+type CardItemProps<T extends React.ElementType = "div"> = {
+    as?: T;
+    children: React.ReactNode;
+    className?: string;
+    translateX?: number | string;
+    translateY?: number | string;
+    translateZ?: number | string;
+    rotateX?: number | string;
+    rotateY?: number | string;
+    rotateZ?: number | string;
+} & React.ComponentPropsWithoutRef<T>;
+
+export const CardItem = <T extends React.ElementType = "div">({
     as: Tag = "div",
     children,
     className,
@@ -105,34 +117,30 @@ export const CardItem = ({
     rotateY = 0,
     rotateZ = 0,
     ...rest
-}: {
-    as?: React.ElementType;
-    children: React.ReactNode;
-    className?: string;
-    translateX?: number | string;
-    translateY?: number | string;
-    translateZ?: number | string;
-    rotateX?: number | string;
-    rotateY?: number | string;
-    rotateZ?: number | string;
-    [key: string]: any;
-}) => {
-    const ref = useRef<HTMLDivElement>(null);
+}: CardItemProps<T>) => {
+    const ref = React.useRef<HTMLDivElement>(null);
     const [isMouseEntered] = useMouseEnter();
 
-    useEffect(() => {
-        handleAnimations();
-    }, [isMouseEntered]);
-
-    const handleAnimations = () => {
+    const handleAnimations = React.useCallback(() => {
         if (!ref.current) return;
         if (isMouseEntered) {
             ref.current.style.transform = `translateX(${translateX}px) translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`;
         } else {
             ref.current.style.transform = `translateX(0px) translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
         }
-    };
+    }, [
+        isMouseEntered,
+        translateX,
+        translateY,
+        translateZ,
+        rotateX,
+        rotateY,
+        rotateZ,
+    ]);
 
+    useEffect(() => {
+        handleAnimations();
+    }, [isMouseEntered, handleAnimations]);
     return (
         <Tag
             ref={ref}

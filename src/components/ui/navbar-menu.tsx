@@ -109,7 +109,11 @@ export const ProductItem = ({
     );
 };
 
-export const HoveredLink = ({ children, ...rest }: any) => {
+type HoveredLinkProps = {
+    children: React.ReactNode;
+} & React.ComponentPropsWithoutRef<typeof Link>;
+
+export const HoveredLink = ({ children, ...rest }: HoveredLinkProps) => {
     return (
         <Link
             {...rest}
