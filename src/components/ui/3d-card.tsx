@@ -123,11 +123,17 @@ export const CardItem = <T extends React.ElementType = "div">({
 
     const handleAnimations = React.useCallback(() => {
         if (!ref.current) return;
-        if (isMouseEntered) {
-            ref.current.style.transform = `translateX(${translateX}px) translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`;
-        } else {
-            ref.current.style.transform = `translateX(0px) translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
-        }
+        const transform = isMouseEntered
+            ? `translate3d(${translateX}px, ${translateY}px, ${translateZ}px) 
+               rotateX(${rotateX}deg) 
+               rotateY(${rotateY}deg) 
+               rotateZ(${rotateZ}deg)`
+            : `translate3d(0, 0, 0) 
+               rotateX(0) 
+               rotateY(0) 
+               rotateZ(0)`;
+
+        ref.current.style.transform = transform;
     }, [
         isMouseEntered,
         translateX,
@@ -141,11 +147,12 @@ export const CardItem = <T extends React.ElementType = "div">({
     useEffect(() => {
         handleAnimations();
     }, [isMouseEntered, handleAnimations]);
+
     return (
         <Tag
             ref={ref}
             className={cn(
-                "w-fit transition duration-200 ease-linear",
+                "w-fit transition-transform duration-200 ease-linear",
                 className
             )}
             {...rest}
@@ -154,7 +161,6 @@ export const CardItem = <T extends React.ElementType = "div">({
         </Tag>
     );
 };
-
 // Create a hook to use the context
 export const useMouseEnter = () => {
     const context = useContext(MouseEnterContext);
